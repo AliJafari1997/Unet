@@ -35,7 +35,7 @@ if __name__=='__main__':
     model_path='/content/drive/MyDrive/files/model.h5'
     batch_size = 8
     epochs = 50
-    lr =1e-5
+    lr =1e-6
 
     metrics=[Recall(), Precision(), dice_coef, MeanIoU(num_classes=2)]
 
