@@ -39,18 +39,18 @@ if __name__ == "__main__":
     tf.random.set_seed(42)
     create_dir("results/")
     ## Dataset
-    test_path = 'C:\\Users\\PC\\Desktop\\new_data\\test\\'
+    test_path = '/content/drive/MyDrive/new_data/test'
     batch_size = 8
 
-    test_x = sorted(glob(os.path.join(test_path, "images\\*")))
-    test_y = sorted(glob(os.path.join(test_path, "masks\\*")))
+    test_x = sorted(glob(os.path.join(test_path, "images/*")))
+    test_y = sorted(glob(os.path.join(test_path, "masks/*")))
     test_dataset = tf_dataset(test_x, test_y, batch=batch_size)
 
     test_steps = (len(test_x)//batch_size)
     if len(test_x) % batch_size != 0:
         test_steps += 1
 
-    model = load_model_weight("C:\\Users\\PC\\Desktop\\project1\\files\\model.h5")
+    model = load_model_weight("/content/drive/MyDrive/files/model.h5")
 
 
     model.compile(loss="binary_crossentropy", optimizer=tf.keras.optimizers.Adam(), metrics=['acc',Recall(),Precision(),iou])
@@ -71,4 +71,4 @@ if __name__ == "__main__":
             mask_parse(y_pred) * 255.0
         ]
         image = np.concatenate(all_images, axis=1)
-        cv2.imwrite(f"C:\\Users\\PC\Desktop\\project1\\results\\{i}.jpg", image)
+        cv2.imwrite(f"/content/drive/MyDrive/results/{i}.jpg", image)
