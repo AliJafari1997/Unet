@@ -3,6 +3,15 @@ from tensorflow.keras.layers import *
 from tensorflow.keras.models import *
 import os
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+from tensorflow.keras.layers import Conv2D, BatchNormalization, Activation, MaxPool2D, UpSampling2D, Concatenate, Input, AveragePooling2D
+from tensorflow.keras.models import Model
+import os
+import numpy as np
+import cv2
+import tensorflow as tf
+from tensorflow.keras.layers import *
+from tensorflow.keras.models import Model
+import tensorflow.keras.backend as K
 
 def conv_block(input, num_filters):
     x = Conv2D(num_filters, 3, padding="same")(input)
@@ -38,10 +47,15 @@ def build_model(input_shape):
 
     b1 = conv_block(p4, 1024)
 
-    d1 = decoder_block(b1, s4, 512)
-    d2 = decoder_block(d1, s3, 256)
-    d3 = decoder_block(d2, s2, 128)
-    d4 = decoder_block(d3, s1, 64)
+    par1 = partial_mesh(s1, s2, s3, s4, 4, 64, strides = 1, ratio=8, kernel_size=7)
+    par2 = partial_mesh(s1, s2, s3, s4, 3, 128, strides = 1, ratio=8, kernel_size=7)
+    par3 = partial_mesh(s1, s2, s3, s4, 2, 256, strides = 1, ratio=8, kernel_size=7)
+    par4 = partial_mesh(s1, s2, s3, s4, 1, 512, strides = 1, ratio=8, kernel_size=7)
+
+    d1 = decoder_block(b1, par4, 512)
+    d2 = decoder_block(d1, par3, 256)
+    d3 = decoder_block(d2, par2, 128)
+    d4 = decoder_block(d3, par1, 64)
 
     outputs = Conv2D(1, 1, padding="same", activation="sigmoid")(d4)
 
@@ -53,4 +67,5 @@ if __name__ == "__main__":
     input_shape = (256, 256, 3)
     model = build_model(input_shape)
     model.summary()
+
 
